@@ -1,0 +1,43 @@
+import requests
+
+def exchange_code_for_token(client_id, client_secret, code):
+    """
+    Exchange the authorization code for an access token and a refresh token.
+
+    Args:
+    client_id: Your Dropbox app key.
+    client_secret: Your Dropbox app secret.
+    code: The authorization code you received.
+
+    Returns:
+    A tuple containing the access token and refresh token.
+    """
+    url = "https://api.dropbox.com/oauth2/token"
+    data = {
+        "code": code,
+        "grant_type": "authorization_code",
+        "client_id": client_id,
+        "client_secret": client_secret
+    }
+
+    response = requests.post(url, data=data)
+    if response.status_code == 200:
+        tokens = response.json()
+        return tokens.get("access_token"), tokens.get("refresh_token")
+    else:
+        print(f"Error: {response.status_code}")
+        print(response.text)
+        return None, None
+
+# Replace the following with your actual details
+client_id = '2jsx26yqzuf0qc6'
+client_secret = 'k15kj3ip6jrjpyc'
+code = 'N6GPgMc73kkAAAAAAAAAE4cZ6bo4hK7zEFSRUtR_lSI'
+
+access_token, refresh_token = exchange_code_for_token(client_id, client_secret, code)
+
+if access_token and refresh_token:
+    print(f"Access Token: {access_token}")
+    print(f"Refresh Token: {refresh_token}")
+else:
+    print("Failed to exchange the code for tokens")
